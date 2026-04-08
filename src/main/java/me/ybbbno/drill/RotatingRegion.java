@@ -1,4 +1,4 @@
-package me.ybbbno.magneticpillar.drill;
+package me.ybbbno.drill;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -6,8 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.entity.ItemDisplay;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Quaternionf;

@@ -1,23 +1,17 @@
-package me.ybbbno.magneticpillar.drill;
+package me.ybbbno.drill;
 
 import me.deadybbb.ybmj.PluginProvider;
 import me.ybbbno.customsounds.CustomSoundsAPI;
 import me.ybbbno.customsounds.VoicechatManager;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.event.EventHandler;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class BreakBedrockEvent implements Listener {
     private final PluginProvider plugin;
@@ -52,14 +46,6 @@ public class BreakBedrockEvent implements Listener {
 //        } else if (is_active) {
 //            event.setCancelled(true);
 //        }
-//    }
-
-//    @EventHandler
-//    public void onBlockBreak(BlockBreakEvent event) {
-//        Block block = event.getBlock();
-//        if (block.getType() != Material.BEDROCK) return;
-//
-//        startEvent(new Location(block.getWorld(), -32, 67, 42));
 //    }
 
     public void startEvent(Location center) {
