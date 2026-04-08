@@ -3,3 +3,11 @@ version: '0.1'
 main: me.ybbbno.drill.Drill
 api-version: '1.21'
 authors: [ Ybbb ]
+dependencies:
+  server:
+    YMBJ:
+      required: true
+      load: BEFORE
+    CustomSounds:
+      required: true
+      load: BEFORE
