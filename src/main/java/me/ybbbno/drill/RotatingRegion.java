@@ -28,8 +28,8 @@ public class RotatingRegion {
     public RotatingRegion(Location center) {
         this.world = center.getWorld();
 
-        Location pos1 = center.clone().add(-4, -1, 1);
-        Location pos2 = center.clone().add(0, 1, -1);
+        Location pos1 = center.clone().add(-1, -7, 1);
+        Location pos2 = center.clone().add(1, 0, -1);
 
         this.center = center.add(0.5, 0.5, 0.5);
 
@@ -45,7 +45,7 @@ public class RotatingRegion {
                 for (int z = minZ; z <= maxZ; z++) {
                     Location loc = new Location(world, x, y, z);
                     Block block = loc.getBlock();
-                    if (block.getType().name().toLowerCase().contains("tuff")) {
+                    if (block.getType().name().toLowerCase().contains("obsidian")) {
                         savedBlocks.add(new SavedBlock(loc, block.getType(), block.getBlockData().getAsString()));
 
                         Vector offset = loc.toVector().subtract(center.toVector());
@@ -68,7 +68,7 @@ public class RotatingRegion {
             sb.display().teleport(newPos);
             sb.display().setTransformation(new Transformation(
                     new Vector3f(),
-                    new Quaternionf().rotateX((float) angle),
+                    new Quaternionf().rotateY((float) angle),
                     new Vector3f(1, 1, 1),
                     new Quaternionf()
             ));

@@ -24,8 +24,8 @@ public class BreakBedrockEvent implements Listener {
     public BreakBedrockEvent(PluginProvider plugin) {
         this.plugin = plugin;
         this.managerS = CustomSoundsAPI.api().manager();
-        centerLoc = new Location(plugin.getServer().getWorld("world"), -227, 71, 175);
-        leverLoc = new Location(plugin.getServer().getWorld("world"), -233, 67,193);
+        centerLoc = new Location(plugin.getServer().getWorld("world"), 1763, -50, 748);
+        leverLoc = new Location(plugin.getServer().getWorld("world"), 1748, -44,747);
     }
 
 //    @EventHandler
@@ -51,24 +51,24 @@ public class BreakBedrockEvent implements Listener {
     public void startEvent(Location center) {
         RotatingRegion region = new RotatingRegion(center);
 
-        managerS.createAudioPlayer(center, 50);
-        managerS.loadTrack(plugin.getDataPath().resolve("drill.mp3").toAbsolutePath().toString(), center, 100);
-        startBurningEffectsTask(center);
+       managerS.createAudioPlayer(center, 75);
+       managerS.loadTrack(plugin.getDataPath().resolve("drill.mp3").toAbsolutePath().toString(), center, 100);
+       startBurningEffectsTask(center);
 
-        Location soundLocation = center.clone().add(-6, 100, 0);
-        managerS.createAudioPlayer(soundLocation, 300);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            managerS.loadTrack(plugin.getDataPath().resolve("pillar-bedrock-destroy.mp3").toAbsolutePath().toString(), soundLocation, 500);
-        }, 1000L);
+       // Location soundLocation = center.clone().add(-6, 100, 0);
+       // managerS.createAudioPlayer(soundLocation, 300);
+       // Bukkit.getScheduler().runTaskLater(plugin, () -> {
+       //     managerS.loadTrack(plugin.getDataPath().resolve("pillar-bedrock-destroy.mp3").toAbsolutePath().toString(), soundLocation, 500);
+       // }, 1000L);
 
-        Location blockLocation = center.clone().add(-5, 0, 0);
-        managerS.createAudioPlayer(blockLocation, 50);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            managerS.loadTrack(plugin.getDataPath().resolve("bedrock-break.mp3").toAbsolutePath().toString(), blockLocation, 100);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                blockLocation.getWorld().getBlockAt(blockLocation).breakNaturally();
-            }, 131L);
-        }, 2200);
+        // Location blockLocation = center.clone().add(-5, 0, 0);
+        // managerS.createAudioPlayer(blockLocation, 50);
+        // Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        //    managerS.loadTrack(plugin.getDataPath().resolve("bedrock-break.mp3").toAbsolutePath().toString(), blockLocation, 100);
+        //    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        //        blockLocation.getWorld().getBlockAt(blockLocation).breakNaturally();
+        //    }, 131L);
+        // }, 2200);
 
         final int start_duration = 304;
         final int end_duration = 2120;
@@ -85,12 +85,12 @@ public class BreakBedrockEvent implements Listener {
                 } else if (tick % interval_drill == 0) {
                     angle = 0.01;
                     center.getWorld().spawnParticle(Particle.ASH,
-                            center.clone().add(-4.4, 0, 0),
-                            20, 0, 0, 0.2);
+                            center.clone().add(-0, -6.6, 0),
+                            20, 0, 0.2, 0);
                 } else if (tick <= end_duration) {
                     angle = Math.min(angle + 0.001, 0.05);
                     center.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE,
-                            center.clone().add(-4.4, 0, 0),
+                            center.clone().add(0, -6.6, 0),
                             0, 0, 0, 0);
                 } else {
                     is_active = false;
