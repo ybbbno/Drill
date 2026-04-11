@@ -3,11 +3,13 @@ package me.ybbbno.drill;
 import me.deadybbb.ybmj.PluginProvider;
 import me.ybbbno.customsounds.CustomSoundsAPI;
 import me.ybbbno.customsounds.VoicechatManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Powerable;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
@@ -24,36 +26,36 @@ public class BreakBedrockEvent implements Listener {
     public BreakBedrockEvent(PluginProvider plugin) {
         this.plugin = plugin;
         this.managerS = CustomSoundsAPI.api().manager();
-        centerLoc = new Location(plugin.getServer().getWorld("world"), 1763, -50, 748);
-        leverLoc = new Location(plugin.getServer().getWorld("world"), 1748, -44,747);
+        centerLoc = new Location(plugin.getServer().getWorld("world"), 37, 75, 60);
+        leverLoc = new Location(plugin.getServer().getWorld("world"), 23, 83,59);
     }
 
-//    @EventHandler
-//    public void onLeverClick(PlayerInteractEvent event) {
-//        if (is_stop) return;
-//        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-//
-//        Block block = event.getClickedBlock();
-//
-//        if (block == null || block.getType() != Material.LEVER) return;
-//        if (!block.getLocation().equals(leverLoc)) return;
-//
-//        Powerable lever = (Powerable) block.getBlockData();
-//
-//        if (!is_active && !lever.isPowered()) {
-//            is_active = true;
-//            startEvent(centerLoc);
-//        } else if (is_active) {
-//            event.setCancelled(true);
-//        }
-//    }
+    @EventHandler
+    public void onLeverClick(PlayerInteractEvent event) {
+        if (is_stop) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        Block block = event.getClickedBlock();
+
+        if (block == null || block.getType() != Material.LEVER) return;
+        if (!block.getLocation().equals(leverLoc)) return;
+
+        Powerable lever = (Powerable) block.getBlockData();
+
+        if (!is_active && !lever.isPowered()) {
+            is_active = true;
+            startEvent(centerLoc);
+        } else if (is_active) {
+            event.setCancelled(true);
+        }
+    }
 
     public void startEvent(Location center) {
         RotatingRegion region = new RotatingRegion(center);
 
-       managerS.createAudioPlayer(center, 75);
+       managerS.createAudioPlayer(center, 75, "lore");
        managerS.loadTrack(plugin.getDataPath().resolve("drill.mp3").toAbsolutePath().toString(), center, 100);
-       startBurningEffectsTask(center);
+//       startBurningEffectsTask(center);
 
        // Location soundLocation = center.clone().add(-6, 100, 0);
        // managerS.createAudioPlayer(soundLocation, 300);
@@ -104,56 +106,56 @@ public class BreakBedrockEvent implements Listener {
         }, 22L, 1L);
     }
 
-    public void startBurningEffectsTask(Location center) {
-        // centerLoc = new Location(plugin.getServer().getWorld("world"), -221, 68, 181);
-        Location pos1 = center.clone().add(1, 3, -1);
-        Location pos2 = center.clone().add(1, 3, 1);
-        List<Location> smokeLocations = Arrays.asList(pos1, pos2);
-        World world = center.getWorld();
-        if (world == null) return;
-
-        BukkitRunnable smokeTask = new BukkitRunnable() {
-            int tick = 0;
-
-            @Override
-            public void run() {
-                tick++;
-
-                int particlesPerLocation;
-                if (tick <= 2120) {
-                    if (tick % 60 == 0) {
-                        particlesPerLocation = 1;
-                    } else {
-                        particlesPerLocation = 0;
-                    }
-                } else {
-                    particlesPerLocation = 2;
-                }
-
-                if (particlesPerLocation == 1) {
-                    for (Location loc : smokeLocations) {
-                        world.spawnParticle(
-                                Particle.CAMPFIRE_SIGNAL_SMOKE,
-                                loc, 0, 0, 1, 0, 0.1
-                        );
-                    }
-                } else if (particlesPerLocation == 2) {
-                    for (int i = 0; i < 2; i++) {
-                        for (Location loc : smokeLocations) {
-                            world.spawnParticle(
-                                    Particle.CAMPFIRE_SIGNAL_SMOKE,
-                                    loc, 0, 0, 1, 0, 0.1
-                            );
-                        }
-                    }
-                }
-
-                if (tick > 2120 + 789) {
-                    this.cancel();
-                }
-            }
-        };
-
-        smokeTask.runTaskTimer(plugin, 0L, 1L);
-    }
+//    public void startBurningEffectsTask(Location center) {
+//        // centerLoc = new Location(plugin.getServer().getWorld("world"), -221, 68, 181);
+//        Location pos1 = center.clone().add(1, 3, -1);
+//        Location pos2 = center.clone().add(1, 3, 1);
+//        List<Location> smokeLocations = Arrays.asList(pos1, pos2);
+//        World world = center.getWorld();
+//        if (world == null) return;
+//
+//        BukkitRunnable smokeTask = new BukkitRunnable() {
+//            int tick = 0;
+//
+//            @Override
+//            public void run() {
+//                tick++;
+//
+//                int particlesPerLocation;
+//                if (tick <= 2120) {
+//                    if (tick % 60 == 0) {
+//                        particlesPerLocation = 1;
+//                    } else {
+//                        particlesPerLocation = 0;
+//                    }
+//                } else {
+//                    particlesPerLocation = 2;
+//                }
+//
+//                if (particlesPerLocation == 1) {
+//                    for (Location loc : smokeLocations) {
+//                        world.spawnParticle(
+//                                Particle.CAMPFIRE_SIGNAL_SMOKE,
+//                                loc, 0, 0, 1, 0, 0.1
+//                        );
+//                    }
+//                } else if (particlesPerLocation == 2) {
+//                    for (int i = 0; i < 2; i++) {
+//                        for (Location loc : smokeLocations) {
+//                            world.spawnParticle(
+//                                    Particle.CAMPFIRE_SIGNAL_SMOKE,
+//                                    loc, 0, 0, 1, 0, 0.1
+//                            );
+//                        }
+//                    }
+//                }
+//
+//                if (tick > 2120 + 789) {
+//                    this.cancel();
+//                }
+//            }
+//        };
+//
+//        smokeTask.runTaskTimer(plugin, 0L, 1L);
+//    }
 }

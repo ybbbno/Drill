@@ -11,12 +11,14 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
+    maven { url = 'https://maven.maxhenkel.de/repository/public' }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly("de.maxhenkel.voicechat:voicechat-api:2.6.0")
     compileOnly(files("libs/YBMJ-0.1.3.jar"))
-    compileOnly(files("libs/CustomSounds-0.1-all.jar"))
+    compileOnly(files("libs/CustomSounds-0.1.1-all.jar"))
 }
 
 def targetJavaVersion = 21

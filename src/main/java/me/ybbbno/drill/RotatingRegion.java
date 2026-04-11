@@ -52,7 +52,7 @@ public class RotatingRegion {
                         BlockDisplay display = world.spawn(loc, BlockDisplay.class);
                         display.setBlock(block.getBlockData());
                         structureBlocks.add(new StructureBlock(display, offset));
-                          block.setType(Material.AIR, false);
+                        block.setType(Material.AIR, false);
                     }
                 }
             }
@@ -62,7 +62,7 @@ public class RotatingRegion {
     public void rotate(double angleP) {
         angle += angleP;
         for (StructureBlock sb : structureBlocks) {
-            Vector rotated = rotateAroundX(sb.offset(), angle);
+            Vector rotated = rotateAroundY(sb.offset(), angle);
             Location newPos = center.clone().add(rotated);
 
             sb.display().teleport(newPos);
@@ -88,6 +88,28 @@ public class RotatingRegion {
 
     private Vector rotateAroundX(Vector v, double angle) {
         double cos = Math.cos(angle), sin = Math.sin(angle);
-        return new Vector(v.getX(), v.getY() * cos - v.getZ() * sin, v.getY() * sin + v.getZ() * cos);
+        return new Vector(
+                v.getX(),
+                v.getY() * cos - v.getZ() * sin,
+                v.getY() * sin + v.getZ() * cos
+        );
+    }
+
+    private Vector rotateAroundY(Vector v, double angle) {
+        double cos = Math.cos(angle), sin = Math.sin(angle);
+        return new Vector(
+                v.getX() * cos + v.getZ() * sin,
+                v.getY(),
+                -v.getX() * sin + v.getZ() * cos
+        );
+    }
+
+    private Vector rotateAroundZ(Vector v, double angle) {
+        double cos = Math.cos(angle), sin = Math.sin(angle);
+        return new Vector(
+                v.getX() * cos - v.getY() * sin,
+                v.getX() * sin + v.getY() * cos,
+                v.getZ()
+        );
     }
 }
