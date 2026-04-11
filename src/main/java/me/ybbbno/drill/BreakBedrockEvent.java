@@ -51,10 +51,19 @@ public class BreakBedrockEvent implements Listener {
     }
 
     public void startEvent(Location center) {
-        RotatingRegion region = new RotatingRegion(center);
+        Location pos1 = center.clone().add(-1, -7, 1);
+        Location pos2 = center.clone().add(1, 0, -1);
 
-       managerS.createAudioPlayer(center, 75, "lore");
-       managerS.loadTrack(plugin.getDataPath().resolve("drill.mp3").toAbsolutePath().toString(), center, 100);
+        RotatingRegion region = new RotatingRegion(
+                center,
+                "obsidian",
+                RotatingAxis.Y,
+                pos1,
+                pos2
+        );
+
+        managerS.createAudioPlayer(center, 75, "lore");
+        managerS.loadTrack(plugin.getDataPath().resolve("drill.mp3").toAbsolutePath().toString(), center, 100);
 //       startBurningEffectsTask(center);
 
        // Location soundLocation = center.clone().add(-6, 100, 0);

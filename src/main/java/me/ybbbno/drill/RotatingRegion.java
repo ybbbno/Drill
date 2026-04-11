@@ -8,6 +8,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 public class RotatingRegion {
 
+    private final RotatingAxis axis;
     private final World world;
     private final Location center;
     private final List<StructureBlock> structureBlocks = new ArrayList<>();
@@ -23,13 +26,11 @@ public class RotatingRegion {
     private double angle = 0;
 
     public record StructureBlock(BlockDisplay display, Vector offset) {}
-    public record SavedBlock(Location location, Material material, String blockDataString) {} // <-- Сохраняем состояние
+    public record SavedBlock(Location location, Material material, String blockDataString) {}
 
-    public RotatingRegion(Location center) {
+    public RotatingRegion(@NotNull Location center, String material, RotatingAxis axis, @NotNull Location pos1, @NotNull Location pos2) {
+        this.axis = axis;
         this.world = center.getWorld();
-
-        Location pos1 = center.clone().add(-1, -7, 1);
-        Location pos2 = center.clone().add(1, 0, -1);
 
         this.center = center.add(0.5, 0.5, 0.5);
 
@@ -45,7 +46,7 @@ public class RotatingRegion {
                 for (int z = minZ; z <= maxZ; z++) {
                     Location loc = new Location(world, x, y, z);
                     Block block = loc.getBlock();
-                    if (block.getType().name().toLowerCase().contains("obsidian")) {
+                    if (block.getType().name().toLowerCase().contains(material)) {
                         savedBlocks.add(new SavedBlock(loc, block.getType(), block.getBlockData().getAsString()));
 
                         Vector offset = loc.toVector().subtract(center.toVector());
@@ -61,18 +62,12 @@ public class RotatingRegion {
 
     public void rotate(double angleP) {
         angle += angleP;
-        for (StructureBlock sb : structureBlocks) {
-            Vector rotated = rotateAroundY(sb.offset(), angle);
-            Location newPos = center.clone().add(rotated);
 
-            sb.display().teleport(newPos);
-            sb.display().setTransformation(new Transformation(
-                    new Vector3f(),
-                    new Quaternionf().rotateY((float) angle),
-                    new Vector3f(1, 1, 1),
-                    new Quaternionf()
-            ));
-        }
+        structureBlocks.forEach(sb -> rotateAroundVector(
+                sb,
+                rotationVector(axis, sb.offset(), angle),
+                leftRotationQuaternion(axis, (float) angle)
+        ));
     }
 
     public void restoreBlocks() {
@@ -86,7 +81,36 @@ public class RotatingRegion {
         }
     }
 
-    private Vector rotateAroundX(Vector v, double angle) {
+    private void rotateAroundVector(@NotNull StructureBlock sb, Vector rotationVector, Quaternionf leftRotation) {
+        Location newPos = center.clone().add(rotationVector);
+
+        sb.display().teleport(newPos);
+        sb.display().setTransformation(new Transformation(
+                new Vector3f(),
+                leftRotation,
+                new Vector3f(1, 1, 1),
+                new Quaternionf()
+        ));
+    }
+
+    private static @NotNull Quaternionf leftRotationQuaternion(@NotNull RotatingAxis axis, float angle) {
+        return switch (axis) {
+            case X -> new Quaternionf().rotateX(angle);
+            case Y -> new Quaternionf().rotateY(angle);
+            case Z -> new Quaternionf().rotateZ(angle);
+        };
+    }
+
+    private static @NotNull Vector rotationVector(@NotNull RotatingAxis axis, @NotNull Vector v, double angle) {
+        return switch (axis) {
+            case X -> rotationVectorAroundX(v, angle);
+            case Y -> rotationVectorAroundY(v, angle);
+            case Z -> rotationVectorAroundZ(v, angle);
+        };
+    }
+
+    @Contract("_, _ -> new")
+    private static @NotNull Vector rotationVectorAroundX(@NotNull Vector v, double angle) {
         double cos = Math.cos(angle), sin = Math.sin(angle);
         return new Vector(
                 v.getX(),
@@ -95,7 +119,8 @@ public class RotatingRegion {
         );
     }
 
-    private Vector rotateAroundY(Vector v, double angle) {
+    @Contract("_, _ -> new")
+    private static @NotNull Vector rotationVectorAroundY(@NotNull Vector v, double angle) {
         double cos = Math.cos(angle), sin = Math.sin(angle);
         return new Vector(
                 v.getX() * cos + v.getZ() * sin,
@@ -104,7 +129,8 @@ public class RotatingRegion {
         );
     }
 
-    private Vector rotateAroundZ(Vector v, double angle) {
+    @Contract("_, _ -> new")
+    private static @NotNull Vector rotationVectorAroundZ(@NotNull Vector v, double angle) {
         double cos = Math.cos(angle), sin = Math.sin(angle);
         return new Vector(
                 v.getX() * cos - v.getY() * sin,
